@@ -1,21 +1,19 @@
 import { Socket } from "socket.io";
 
-class Player {
+export class Player {
 
     location  : Point;
     level     : number;
     readyCash : number;
     turnNumber: number;
     name      : string;
-    socket    : Socket;
 
-    constructor(socket: Socket, location: Point, turnNumber: number, readyCash: number) {
-        this.socket     = socket;
+    constructor(name: string, location: Point, turnNumber: number, readyCash: number) {
+        this.name     = name;
         this.location   = location;
         this.turnNumber = turnNumber;
         this.readyCash  = readyCash;
         this.level      = 1;
-        this.name       = socket.data.name;
     }
 
     getNetWorth(): number {

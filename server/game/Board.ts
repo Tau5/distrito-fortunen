@@ -28,8 +28,13 @@ class Board {
         return this.squares;
     }
 
+    getNetSquareList(): NetSquare[] {
+        return this.squares.map(s => s.netify());
+    }
     setSquareList(squares: Square[]) {
         this.squares = squares;
     }
+
+
     
 }

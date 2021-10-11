@@ -3,6 +3,7 @@ import * as http from "http";
 import * as socketIo from "socket.io";
 import * as crypto from "crypto";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
+import { Game } from "./game/Game";
 
 const PORT: Number = typeof process.env.PORT == "string" ? parseInt(process.env.PORT) : 3001;
 
@@ -74,6 +75,15 @@ io.on("connection", (socket: socketIo.Socket) => {
             } else {
                 reply("ok");
                 io.in(roomId).emit("game loading");
+                var board: Board = new Board(new Point(5, 3));
+                board.setSquareList([
+                    new SquareTest(new Point(1, 1), "Square1", [new Point(2,1)]),
+                    new SquareTest(new Point(2, 1), "Square2", [new Point(1,1), new Point(3,1)]),
+                    new SquareTest(new Point(3, 1), "Square3", [new Point(2,1)])
+                ]);
+                var game = new Game(roomId, io, board, 5000);
+                game.generatePlayers(new Point(2,1), 1000, sockets.map(s => s.data.name));
+
                 // TODO: Load and start game
             }
         })

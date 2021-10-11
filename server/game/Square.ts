@@ -1,3 +1,9 @@
+interface NetSquare {
+    description: SquareDescription
+    location: NetPoint;
+    neighbours: NetPoint[];
+}
+
 abstract class Square {
     description: SquareDescription;
     location: Point;
@@ -11,4 +17,12 @@ abstract class Square {
     abstract onStep(): void;
     abstract onDrop(): void;
     abstract updateDescription(): void;
+    netify(): NetSquare {
+        return {
+            description: this.description,
+            location: this.location.netify(),
+            neighbours: this.neighbours.map(n => n.netify())
+        }
+    }
 }
+

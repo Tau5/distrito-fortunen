@@ -2,7 +2,7 @@
     "compilerOptions": {
         "jsx": "react-jsx",
         "module": "commonjs",
-        "rootDirs": ["./server", "./client"],
+        "rootDirs": ["./server"],
         "outDir": "./build",
         "moduleResolution": "node",
         "strict": true
