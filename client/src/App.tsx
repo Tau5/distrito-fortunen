@@ -1,9 +1,8 @@
 import logo from './logo.svg';
 import './App.css';
+import { ConnectionGate } from "./components/ConnectionGate";
+import { Component } from "react";
 
-import { useState, useEffect, Component } from "react";
-import {io, Socket} from "socket.io-client";
-const ENDPOINT = "http://127.0.0.1:3001";
 
 interface ContadorProps {
     name: string,
@@ -67,7 +66,7 @@ function App() {
 
   return (
     <div>
-        
+        <ConnectionGate endpoint="localhost:3001"/>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { ChangeEvent, Component, InputHTMLAttributes } from "react";
 import {io, Socket} from "socket.io-client";
-
+import RoomGate from "./RoomGate";
 interface ConnectionGateProps {
     endpoint: string;
 }
@@ -8,18 +8,21 @@ interface ConnectionGateProps {
 interface ConnectionGateState {
     socket: Socket | undefined;
     connected: boolean,
-    name: string
+    name: string,
+    errors: string
 }
 
-class ConnectionGate extends Component<ConnectionGateProps, ConnectionGateState> {
+export class ConnectionGate extends Component<ConnectionGateProps, ConnectionGateState> {
     constructor(props: ConnectionGateProps) {
         super(props)
         this.state = {
             socket: undefined,
             connected: false,
-            name: ""
+            name: "",
+            errors: ""
         };
         this.connect = this.connect.bind(this);
+        this.handleNameChange = this.handleNameChange.bind(this);
     }
 
     componentDidMount() {
@@ -27,11 +30,13 @@ class ConnectionGate extends Component<ConnectionGateProps, ConnectionGateState>
 
     connect() {
         if (this.state.name.length < 2) return;
-        this.setState((state, props) => {
-            socket: io(props.endpoint)
-        });
-        this.state.socket?.on("connection", () => {
-            this.state.socket?.emit("register name", this.state.name);
+        const socket = io(this.props.endpoint);
+        this.setState({socket: socket});
+        console.log("Attempting connection");
+        socket.on("connect", () => {
+            console.log("Connected to server");
+            socket.emit("register name", this.state.name);
+            this.setState({connected: true});
         })
     }
 
@@ -45,9 +50,16 @@ class ConnectionGate extends Component<ConnectionGateProps, ConnectionGateState>
         if (!this.state.connected) {
             return (
                 <div>
-                    <input type="text" size={10} placeholder="Name" value={this.state.name} />
+                    <p className="error" >{this.state.errors}</p>
+                    <input type="text" size={10} placeholder="Name" value={this.state.name} onChange={this.handleNameChange} />
                     <button onClick={this.connect}>Connect</button>
                 </div>
+            )
+        } else {
+            return (
+            <div>
+                <RoomGate socket={this.state.socket as Socket}></RoomGate>
+            </div>
             )
         }
     }
