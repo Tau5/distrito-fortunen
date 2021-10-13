@@ -1,9 +1,9 @@
-interface NetPoint {
+export interface NetPoint {
     x: number,
     y: number
 }
 
-class Point {
+export class Point {
     x: number
     y: number
 

@@ -5,15 +5,19 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "pwa-node",
+            "type": "node",
             "request": "launch",
-            "name": "Launch Program",
+            "name": "Debug server",
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/server/index.ts",
+            "preLaunchTask": "npm: build - server",
+            "sourceMaps": true,
+            "smartStep": true,
+            "console": "integratedTerminal",
+            "program": "${workspaceFolder}/server/src/index.ts",
             "outFiles": [
-                "${workspaceFolder}/**/*.js"
+                "${workspaceFolder}/server/out/**/*.js"
             ]
         }
     ]

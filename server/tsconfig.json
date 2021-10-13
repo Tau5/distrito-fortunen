@@ -1,14 +1,30 @@
 {
-    "compilerOptions": {
-        "jsx": "react-jsx",
-        "module": "commonjs",
-        "rootDirs": ["./server"],
-        "outDir": "./build",
-        "moduleResolution": "node",
-        "strict": true
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "commonjs",
+    "outDir": "out",
+    "moduleResolution": "node",
+    "rootDirs": ["src", "../common"],
+    "paths": {
+      "common/*": ["../common/*"],
+      "server/*": ["src/*"],
+      "client/*": ["../client/src/*"]
     },
-    "exclude": [
-        "server/node_modules"
+    "plugins": [
+      {
+        "transform": "@zerollup/ts-transform-paths"
+      }
     ],
-    
+    "strict": true,
+    "target": "es5",
+    "esModuleInterop": true,
+    "sourceMap": true
+  },
+  "exclude": [
+    "./node_modules"
+  ],
+  "include": [
+    "src",
+    "../common"
+  ]
 }

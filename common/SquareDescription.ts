@@ -1,16 +1,16 @@
-interface SquareDescriptionValues {
+export interface SquareDescriptionValues {
     label: string,
     value: number
 }
 
 
-interface SquareDescription {
+export interface SquareDescription {
     /**
      * title: title of the square
      */
     title: string,
     /**
-     * rank: Rank of the square from 1 to 3, if 0, no rank is displayed
+     * rank: Rank of the square from 1 to 5, if 0, no rank is displayed
      */
     rank: number
     /**

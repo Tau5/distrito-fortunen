@@ -1,4 +1,8 @@
-class SquareTest extends Square {
+import { Point } from "common/Point";
+import { Square } from "common/Square";
+import { SquareDescription } from "common/SquareDescription";
+
+export class SquareTest extends Square {
     constructor(location: Point, name: string, neighbours: Point[]) {
         let description: SquareDescription = {
             baseText: "This is a square used for testing, no maps should use it on production",

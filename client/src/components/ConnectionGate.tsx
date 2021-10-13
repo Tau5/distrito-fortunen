@@ -58,7 +58,7 @@ export class ConnectionGate extends Component<ConnectionGateProps, ConnectionGat
         } else {
             return (
             <div>
-                <RoomGate socket={this.state.socket as Socket}></RoomGate>
+                <RoomGate name={this.state.name} socket={this.state.socket as Socket}></RoomGate>
             </div>
             )
         }

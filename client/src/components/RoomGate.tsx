@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Component } from 'react';
-import {io, Socket} from "socket.io-client";
+import {Socket} from "socket.io-client";
 import WaitingRoom from "./WaitingRoom";
 
 interface RoomGateProps {
     socket: Socket
+    name: string
 }
  
 interface RoomGateState {
@@ -34,7 +34,6 @@ class RoomGate extends React.Component<RoomGateProps, RoomGateState> {
             this.setState({roomID: roomID});
             this.joinRoom();
         })
-        
     }
 
     joinRoom() {
@@ -77,7 +76,7 @@ class RoomGate extends React.Component<RoomGateProps, RoomGateState> {
                 )
             }
         } else {
-            return ( <WaitingRoom socket={this.props.socket} roomId={this.state.roomID} /> );
+            return ( <WaitingRoom name={this.props.name} socket={this.props.socket} roomId={this.state.roomID} /> );
         }
     }
 }
