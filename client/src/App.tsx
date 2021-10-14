@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import { ConnectionGate } from "./components/ConnectionGate";
 import { Component } from "react";

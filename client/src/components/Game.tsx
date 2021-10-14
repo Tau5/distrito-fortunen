@@ -3,6 +3,7 @@ import {io, Socket} from "socket.io-client";
 import { NetSquare } from "common/Square";
 import { NetBoard } from "common/Board";
 import Board from './game/Board';
+import { Point } from 'common/Point';
 
 interface GameProps {
     socket: Socket
@@ -25,7 +26,7 @@ class Game extends React.Component<GameProps, GameState> {
         if (this.state.loading) {
             return ( <p>Loading... Please wait</p> );
         } else if (this.state.board) {
-            return ( <Board board={this.state.board} /> );
+            return ( <Board board={this.state.board} margin={4} squareSize={new Point(16, 16)} /> );
         }
     }
 
