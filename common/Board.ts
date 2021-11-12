@@ -34,7 +34,7 @@ export class Board {
     }
 
     getSquare(location: Point): Square | null {
-        return this.squares.find(square => square.location == location) ?? null;
+        return this.squares.find(square => square.location.equal(location) ) ?? null;
     }
 
     getSquareNeighbours(location: Point): Point[] | null {
@@ -62,6 +62,19 @@ export class Board {
             initialPoint: this.initialPoint.netify(),
             size: this.size.netify()
         };
+    }
+
+    canPlayerMove(originalLocation: Point, newLocation: Point): boolean {
+        var originSquare = this.getSquare(originalLocation)
+        if ( originSquare ) {
+            console.log("[Board/canPlayerMove] Found origin square")
+            var targetSquare = this.getSquare(newLocation);
+            if (targetSquare) {
+                console.log("[Board/canPlayerMove] Found target square")
+                return originSquare.neighbours.some(p => p.equal(newLocation));
+            }
+        }
+        return false;
     }
 
     

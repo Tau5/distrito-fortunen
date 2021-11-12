@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import { Point } from "common/Point";
-
+import { NetPlayer } from "common/NetPlayer";
 export class Player {
 
     location  : Point;
@@ -9,6 +9,8 @@ export class Player {
     turnNumber: number;
     name      : string;
     socket    : Socket;
+    /** The last point the player was before entering their current location */
+    lastMove  : Point = new Point(-1, -1) 
 
     constructor(name: string, socket: Socket, location: Point, turnNumber: number, readyCash: number) {
         this.name     = name;
@@ -22,6 +24,18 @@ export class Player {
     getNetWorth(): number {
         // TODO: Contratar un economista
         return this.readyCash;
+    }
+
+    netify(): NetPlayer {
+        return {
+            location: this.location.netify(),
+            level: this.level,
+            readyCash: this.readyCash,
+            netWorth: this.getNetWorth(),
+            turnNumber: this.turnNumber,
+            name: this.name,
+            lastMove: this.lastMove.netify()
+        }
     }
     
 }

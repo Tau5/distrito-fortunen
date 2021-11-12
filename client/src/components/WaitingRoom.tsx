@@ -30,6 +30,9 @@ class WaitingRoom extends React.Component<WaitingRoomProps, WaitingRoomState> {
             this.setState((state, props) => { return { 
                 playerNames: [...state.playerNames, playerName]
             }});
+            if (this.props.roomId == "DebugRoom" && this.state.playerNames.length == 4) {
+                this.startButtonPressed();
+            }
         })
         this.props.socket.on("game loaded", () => {
             console.log("Server announces that the game is loaded.")

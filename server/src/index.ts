@@ -45,8 +45,36 @@ io.on("connection", (socket: socketIo.Socket) => {
         console.log(`[Socket] Recieved event ${evName}`);
     })
     
-    socket.on("register name", (name: string) => {
+    socket.on("register name", (name: string, debug: boolean) => {
         socket.data.name = name;
+        
+        if (debug) {
+            if (rooms.includes("DebugRoom") && games.get("DebugRoom")?.players.length as number >= 4) {
+                var board: Board = new Board(new Point(5, 3), 5000, 1000, new Point(2,1));
+                board.setSquareList([
+                    new SquareTest(new Point(1, 1), "Square1", [new Point(2,1)]),
+                    new SquareTest(new Point(2, 1), "Square2", [new Point(1,1), new Point(3,1)]),
+                    new SquareTest(new Point(3, 1), "Square3", [new Point(2,1)])
+                ]);
+                games.delete("DebugRoom")
+                games.set("DebugRoom", new Game("DebugRoom", board, io));
+            }
+            if (!rooms.includes("DebugRoom")) {
+                rooms.push("DebugRoom")
+                var board: Board = new Board(new Point(5, 3), 5000, 1000, new Point(2,1));
+                board.setSquareList([
+                    new SquareTest(new Point(1, 1), "Square1", [new Point(2,1)]),
+                    new SquareTest(new Point(2, 1), "Square2", [new Point(1,1), new Point(3,1)]),
+                    new SquareTest(new Point(3, 1), "Square3", [new Point(2,1)])
+                ]);
+                games.set("DebugRoom", new Game("DebugRoom", board, io));
+            }
+            socket.join("DebugRoom");
+            games.get("DebugRoom")?.join(socket, socket.data.name);
+            socket.broadcast.to("DebugRoom").emit("player joined", socket.data.name);
+            console.log(`[Room/DebugRoom] Player ${socket.data.name} joined`);
+        }
+
     })
     socket.on("create room", (reply: Function) => {
         var roomId = crypto.randomBytes(2).toString('hex');

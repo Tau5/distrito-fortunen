@@ -36,3 +36,17 @@
     transform: rotate(360deg);
   }
 }
+
+.log-item {
+  background-color: #8befcf;
+  margin-top: 0.5ex;
+  list-style-type: none;
+}
+
+.game-left-panel {
+  float: left;
+}
+
+.game-left-panel {
+  float: right;
+}
