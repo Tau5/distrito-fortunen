@@ -1,20 +1,15 @@
-import { NetPoint, Point } from "./Point";
-import { NetSquare, Square } from "./Square";
-
-export interface NetBoard {
-    squares: NetSquare[];
-    size: NetPoint;
-    initialCash: number;
-    initialPoint: NetPoint;
-    goal: number;
-}
+import { NetBoard } from "common/NetBoard";
+import { NetSquare } from "common/NetSquare";
+import { Point } from "common/Point";
+import { District } from "./District";
+import { Square } from "./Square";
 
 export class Board {
 
     /**
      * List of squares in no particular order
      */
-    private squares: Square[];
+    private districts: District[];
 
     /**
      * Dimensions of the board
@@ -24,17 +19,32 @@ export class Board {
     goal: number;
     initialCash: number
     initialPoint: Point;
+    salaryBase: number;
 
-    constructor(size: Point, goal: number, initialCash: number, initialPoint: Point) {
+    constructor(size: Point, goal: number, initialCash: number, salaryBase: number, initialPoint: Point) {
         this.size = size;
-        this.squares = [];
+        this.districts = [];
         this.goal = goal;
         this.initialCash = initialCash;
+        this.salaryBase = salaryBase;
         this.initialPoint = initialPoint;
     }
 
+    static clone(board: Board): Board {
+        var newBoard = new Board(board.size, board.goal, board.initialCash, board.salaryBase, board.initialPoint);
+        board.districts.forEach(district => {
+            newBoard.addDistrict(district);
+        });
+        return newBoard;
+    }
+
     getSquare(location: Point): Square | null {
-        return this.squares.find(square => square.location.equal(location) ) ?? null;
+        let match = null;
+        for(let i = 0; i < this.districts.length; i++) {
+            match = this.districts[i].getSquare(location);
+            if (match != null) break;
+        }
+        return match;
     }
 
     getSquareNeighbours(location: Point): Point[] | null {
@@ -42,16 +52,22 @@ export class Board {
         return this.getSquare(location)?.neighbours ?? null;
     }
 
+    /* *//*
     getSquareList(): Square[] {
         return this.squares;
     }
+    */
 
     getNetSquareList(): NetSquare[] {
-        return this.squares.map(s => s.netify());
+        let out: NetSquare[] = [];
+        this.districts.forEach(district => {
+            out = out.concat(district.getNetSquareList());
+        });
+        return out;
     }
 
-    setSquareList(squares: Square[]) {
-        this.squares = squares;
+    addDistrict(district: District) {
+        this.districts.push(district);
     }
 
     netify(): NetBoard {
@@ -75,6 +91,12 @@ export class Board {
             }
         }
         return false;
+    }
+
+    onSquareUpdate(callback: (index: number, square: Square) => void) {
+        this.districts.forEach(district => {
+            district.onSquareUpdate(callback);
+        })
     }
 
     

@@ -1,7 +1,8 @@
-import { NetBoard } from 'common/Board';
+import { NetBoard } from 'common/NetBoard';
 import { GameSituation } from 'common/GameSituation';
 import { Point } from 'common/Point';
 import * as React from 'react';
+import { Colors } from "common/Colors";
 
 interface BoardProps {
     gameSituation: GameSituation,
@@ -18,16 +19,13 @@ interface BoardState {
 function getPlayerFillStyle(turnNumber: number) {
     switch (turnNumber) {
         case 0:
-            return "#1aed59"
-            break;
+            return Colors.blue;
         case 1:
-            return "#1aaded"
-        
+            return Colors.orange;
         case 2:
-            return "#ed1aad"
-
+            return Colors.red;
         case 3:
-            return "#ed591a"
+            return Colors.violet;
         default:
             return "black"
             break;
@@ -47,6 +45,7 @@ class Board extends React.Component<BoardProps, BoardState> {
         const canvas = this.canvasRef.current;
         if (canvas) {
             this.ctx = canvas.getContext("2d");
+            this.calculateCanvasSize();
             this.renderCanvas();
         }
     }
@@ -71,7 +70,7 @@ class Board extends React.Component<BoardProps, BoardState> {
             //this.ctx.clearRect(0, 0, this.state.width, this.state.height);
             this.props.gameSituation.board.squares.forEach((sq) => {
                 if (this.ctx) {
-                    this.ctx.fillStyle = 'grey';
+                    this.ctx.fillStyle = 'white';
                     this.ctx.fillRect(
                         (this.props.margin*(sq.location.x+1)) + (this.props.squareSize.x*sq.location.x),
                         (this.props.margin*(sq.location.y+1)) + (this.props.squareSize.y*sq.location.y),

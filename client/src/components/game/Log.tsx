@@ -7,9 +7,13 @@ interface LogProps {
 class Log extends React.Component<LogProps> {
     render() { 
         return ( 
-            <ul>
-                {this.props.messages.map(m => <li className="log-item">{m}</li>)}
-            </ul>
+            <div className="log" >
+                {
+                //                  https://stackoverflow.com/a/5024096
+                //                        ^
+                this.props.messages.slice(0).reverse().map(m => <p className="log-item">{m}</p>)
+                }
+            </div>
         );
     }
 }

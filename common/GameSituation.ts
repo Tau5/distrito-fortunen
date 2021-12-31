@@ -1,6 +1,6 @@
 import { NetPoint } from "./Point";
 import { NetPlayer } from "./NetPlayer";
-import { NetBoard } from "./Board";
+import { NetBoard } from "./NetBoard";
 
 /**
  * Interface with ALL the information about the current game.

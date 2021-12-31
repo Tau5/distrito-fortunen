@@ -1,52 +1,199 @@
-.App {
-  text-align: center;
+
+:root {
+  --primary-white: #e9fae3ff;
+  --primary-black: #2a2e45ff;
+  --color-blue: #79a9d1ff;
+  --color-red: #f05365ff;
+  --color-orange: #ff9f1cff;
+  --color-violet: #B52CB2;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+body {
+ color: white;
+ background-color: #181a1b;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.log {
+  max-height: 6em;
+  height: 6em;
+  overflow-y: scroll;
 }
 
 .log-item {
-  background-color: #8befcf;
-  margin-top: 0.5ex;
+  background-color: var(--primary-black);
+  padding: 0.1em;
+  margin: 0;
+  margin-bottom: 0;
   list-style-type: none;
 }
 
-.game-left-panel {
-  float: left;
+.error {
+  color: var(--color-red);
 }
 
-.game-left-panel {
+.game {
+  display: flex;
+}
+
+.game-moves-left {
+  text-align: center;
+}
+
+.game-movement-buttons {
+  display: flex;
+}
+
+.game-button-flex1 {
+  flex: 1
+}
+
+.game-left-panel, .game-right-panel {
+  flex: 2;
+  margin-left: 1em;
+  margin-right: 1em;
+}
+
+.game-center-panel {
+  flex: 3;
+}
+
+canvas {
+  display: flex;
+}
+
+.square {
+  border: 1px solid;
+  border-radius: 3px;
+  margin: 1em 0 1em 0;
+  padding: 0.5em;
+}
+
+.square-name {
+  margin: 0;
+  display: inline;
+}
+
+.square-rank {
+  display: inline;
+  margin-bottom: 0;
+  margin-top: 0;
   float: right;
+  margin-right: 0.1em;
+}
+
+.square-values {
+  display: flex;
+}
+
+.square-values-label {
+  flex: 1;  
+  background-color: var(--color-blue);
+  color: white;
+  padding-left: 0.5em;
+  margin: 0.1em 0 0.1em 0;
+}
+
+.square-values-value {
+  flex: 2;
+  background-color: var(--primary-black);
+  color: white;
+  padding-left: 0.5em;
+  margin: 0.1em 0 0.1em 0;
+}
+
+.action-list {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+.action {
+  background-color: var(--primary-black);
+  border: grey 1px solid;
+  border-radius: 4px;
+  margin-bottom: 0.2em;
+  display: flex;
+  
+}
+
+.action > input {
+  margin: 0;
+  background-color: white;
+  color: black;
+  border: 0;
+  flex: 1;
+  min-width: 0;
+  border-radius: 0 4px 4px 0;
+  text-align: center;
+}
+
+.action:hover {
+  background-color: grey;
+}
+
+.action:active {
+  background-color: rgb(116, 116, 15);
+}
+
+.action p {
+  margin: 0;
+  color: white;
+  flex: 3;
+  margin: 0.2em;
+}
+
+.player-info {
+  border: 1px solid white;
+  border-radius: 3px;
+  background-color: var(--primary-black);
+  color: white;
+  margin: 0.2em 0 0 0;
+  display: flex;
+}
+
+.player-info p {
+  margin: 0;
+  padding: 0.2em;
+}
+
+.player-info-name {
+  flex: 1;
+  background-color: var(--color-blue);
+}
+
+.player-info-readyCash {
+  flex: 1;
+  text-align: right;
+  background-color: var(--primary-black);
+
+}
+
+.player-info-netWorth {
+  flex: 1;
+  text-align: right;
+  background-color: var(--primary-black);
+}
+
+.popup {
+  background-color: #505050;
+  color: white;
+  min-height: 3em;
+  padding: 0.5em;
+  margin-top: 1em;
+}
+
+/* Text on popup with only a title, which behaves as a body of text and not a title*/
+.popup-body {
+  text-align: center;
+  margin: 0;
+}
+
+.popup-title {
+  text-align: center;
+  font-size: 1.25em;
+  margin-bottom: 0.5em;
+  margin: 0 0 0.5em 0;
+}
+
+.popup-subtitle {
+  text-align: center;
+  margin: 0;
 }

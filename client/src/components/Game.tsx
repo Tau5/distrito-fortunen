@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {io, Socket} from "socket.io-client";
-import { NetSquare } from "common/Square";
-import { NetBoard } from "common/Board";
+import { NetSquare } from "common/NetSquare";
+import { NetBoard } from "common/NetBoard";
 import Board from './game/Board';
 import { NetPoint, Point } from 'common/Point';
 import { GameSituation } from "common/GameSituation"
@@ -9,6 +9,13 @@ import { produce } from "immer";
 import { NetPlayer } from 'common/NetPlayer';
 import { Turn } from "common/Turn";
 import Log from './game/Log';
+import SquareInfo from './game/SquareInfo';
+import { SquareDescription } from 'common/SquareDescription';
+import { ActionList } from 'common/ActionList';
+import ActionListRenderer from './game/ActionListRenderer';
+import PlayersInfo from './game/PlayersInfo';
+import { NetPopup } from "common/NetPopup";
+import Popup from "./game/Popup";
 
 interface GameProps {
     socket: Socket
@@ -23,19 +30,41 @@ interface GameState {
     isTurn: boolean;
     turn: Turn | null;
     log: string[];
+    actionPopup: boolean;
+    movementDisabled: boolean;
+    actionList: ActionList | null;
+    popup: NetPopup | null;
 }
 
 class Game extends React.Component<GameProps, GameState> {
-    
+
     constructor(props: GameProps) {
         super(props);
-        this.state = { loading: true, gameSituation: null, isTurn: false, playerIndex: -1, turn: null, log: [] }
+        this.state = { 
+            loading: true, 
+            gameSituation: null, 
+            isTurn: false, 
+            playerIndex: -1, 
+            turn: null, 
+            log: [], 
+            actionPopup: false,
+            movementDisabled: false,
+            actionList: null,
+            popup: null
+        }
+        this.actionListReplyHandler = this.actionListReplyHandler.bind(this);
     }
 
     getThisPlayer(): NetPlayer | undefined {
         if (this.state.gameSituation)
-        return this.state.gameSituation.players[this.state.playerIndex];
+            return this.state.gameSituation.players[this.state.playerIndex];
     }
+
+    getCurrentPlayer(): NetPlayer | undefined {
+        if (this.state.gameSituation && this.state.turn)
+            return this.state.gameSituation.players.find(p => p.name == this.state.turn?.playerName)
+    }
+    
     move(direction: Point) {
         if (!this.state.isTurn) return;
         let thisPlayer = this.getThisPlayer();
@@ -45,24 +74,56 @@ class Game extends React.Component<GameProps, GameState> {
         }
     }
 
+    getSquare(location: Point): NetSquare | null {
+        return this.state.gameSituation?.board.squares.find(square => Point.fromNet(square.location).equal(location) ) ?? null;
+    }
+
+    getCurrentSquare(): NetSquare | null {
+        if (this.state.gameSituation) {
+            if (this.getCurrentPlayer()) {
+                return this.getSquare(Point.fromNet((this.getCurrentPlayer() as NetPlayer).location))
+            }
+        } 
+        return null;
+    }
+
+    actionListReplyHandler(name: string, number: number | null) {
+        this.props.socket.emit(name, number);
+        this.setState({ actionPopup: false, movementDisabled: false });
+    }
+
     render() { 
         if (this.state.loading) {
             return ( <div> <p>Loading... Please wait</p> <Log messages={this.state.log} /> </div> );
         } else if (this.state.gameSituation) {
             return ( 
-                <div>
+                <div className="game">
                     <div className="game-left-panel">
+                        <h3 className="game-moves-left">{this.state.turn? this.state.turn.movesLeft.toString() : ""}</h3>
+                        <div className="game-movement-buttons">
+                            <button disabled={this.state.movementDisabled} className="game-button-flex1" onClick={ () => this.move(new Point(-1, 0)) }>⬅</button>
+                            <button disabled={this.state.movementDisabled} className="game-button-flex1" onClick={ () => this.move(new Point(1, 0)) }>➡</button>
+                            <button disabled={this.state.movementDisabled} className="game-button-flex1" onClick={ () => this.move(new Point(0, 1)) }>⬇️</button>
+                            <button disabled={this.state.movementDisabled} className="game-button-flex1" onClick={ () => this.move(new Point(0, -1)) }>⬆️</button>
+                        </div>
+                        {this.state.actionPopup && this.state.actionList ? 
+                            <div>
+                                <ActionListRenderer reply={this.actionListReplyHandler} list={this.state.actionList} />
+                            </div>
+                        : null}
+
+                    </div>
+                    <div className="game-center-panel">
                         <Board gameSituation={this.state.gameSituation} margin={4} squareSize={new Point(64, 64)} /> 
-                        <button onClick={ () => this.move(new Point(-1, 0)) }>(-1,  0)</button>
-                        <button onClick={ () => this.move(new Point(1, 0)) }> ( 1,  0)</button>
-                        <button onClick={ () => this.move(new Point(0, 1)) }> ( 0,  1)</button>
-                        <button onClick={ () => this.move(new Point(0, -1)) }>( 0, -1)</button>
+                        {this.state.popup?
+                            <Popup popup={this.state.popup}/>
+                        : null}
                     </div>
-                    <div className="game-right-panel">
+                    <div className='game-right-panel'>
                         <Log messages={this.state.log} />
+                        <SquareInfo squareDescription={this.getCurrentSquare()?.description ?? null}/>
+                        <PlayersInfo gameSituation={this.state.gameSituation}/>
                     </div>
-
-
                 </div>
             );
         }
@@ -97,6 +158,62 @@ class Game extends React.Component<GameProps, GameState> {
                     return { turn: turn, log: prevState.log.concat(`It's ${turn.playerName}'s turn!'`) };
                 });
             }
+        })
+
+        this.props.socket.on("update turn", (turn: Turn) => {
+            this.setState(prevState => {
+                return { turn: turn }
+            })
+        })
+
+        this.props.socket.on("display action list", (actionList: ActionList) => {
+            setTimeout(() => {
+                this.setState(prevState => {
+                    return { actionList: actionList, actionPopup: true, movementDisabled: true };
+                })
+            }, 500)
+
+        })
+
+        this.props.socket.on("update player", (player: NetPlayer) => {
+            console.log(`Server sent an update for ${player.name}`);
+            this.setState(
+                produce((draft: GameState) => {
+                    if (!draft.gameSituation) return;
+                    var playerIndex = draft.gameSituation.players.findIndex(p => p.name == player.name)
+                    if (playerIndex > -1) {
+                        draft.gameSituation.players[playerIndex] = player;
+                    } else {
+                        console.log("Player not found")
+                    }
+                })
+            );
+        })
+
+        this.props.socket.on("update square", (index: number, square: NetSquare) => {
+            this.setState(
+                produce((draft: GameState) => {
+                    if (!draft.gameSituation) return;
+                    draft.gameSituation.board.squares[index] = square;
+                })
+            )
+        })
+
+        this.props.socket.on("popup", (popup: NetPopup) => {
+            this.setState({
+                movementDisabled: true,
+                popup: popup
+            });
+
+            if (popup.timeout != -1) {
+                setTimeout(() => {
+                    this.setState({
+                        movementDisabled: false,
+                        popup: null
+                    });
+                }, popup.timeout);
+            }
+
         })
     }
 

@@ -43,7 +43,7 @@ export class ConnectionGate extends Component<ConnectionGateProps, ConnectionGat
             console.log("Connected to server");
             if (debug) {
                 this.setState({
-                    name: "Debug"+(Math.round(Math.random()*8)).toString(),
+                    name: "Debug"+(Math.round(Math.random()*1000)).toString(),
                 })
             }
             socket.emit("register name", this.state.name, debug);

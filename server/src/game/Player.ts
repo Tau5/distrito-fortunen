@@ -5,25 +5,41 @@ export class Player {
 
     location  : Point;
     level     : number;
-    readyCash : number;
+    private readyCash : number;
     turnNumber: number;
     name      : string;
     socket    : Socket;
     /** The last point the player was before entering their current location */
     lastMove  : Point = new Point(-1, -1) 
+    update: (player: Player) => void;
 
-    constructor(name: string, socket: Socket, location: Point, turnNumber: number, readyCash: number) {
+    constructor(name: string, socket: Socket, location: Point, turnNumber: number, readyCash: number, update: (player: Player) => void) {
         this.name     = name;
         this.socket   = socket;
         this.location   = location;
         this.turnNumber = turnNumber;
         this.readyCash  = readyCash;
         this.level      = 1;
+        this.update = update;
     }
 
     getNetWorth(): number {
         // TODO: Contratar un economista
         return this.readyCash;
+    }
+
+    getReadyCash(): number {
+        return this.readyCash;
+    }
+
+    setReadyCash(x: number): void {
+        this.readyCash = x;
+        this.update(this);
+    }
+
+    changeReadyCash(x: number): void {
+        this.readyCash += x;
+        this.update(this);
     }
 
     netify(): NetPlayer {
